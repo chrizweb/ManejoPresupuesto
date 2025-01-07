@@ -12,7 +12,7 @@ namespace ManejoPresupuesto.Models {
 		[Remote(action: "VerificarTipoCuenta", controller:"TiposCuentas")]
 		public string Nombre { get; set; }
 		public int UsuarioId { get; set; }
-		public int Order { get; set; }
+		public int Orden { get; set; }
 
 		
 	}
