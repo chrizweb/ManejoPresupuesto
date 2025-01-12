@@ -24,8 +24,8 @@ namespace ManejoPresupuesto.Controllers {
 		/*****************************************************************/
 		public async Task<IActionResult> Index() {
 
-			var usuarioId = servicioUsuarios.ObtenerUsuarioId();
-			var tiposCuentas = await repositorioTiposCuentas.Obtener(usuarioId);
+			var usuarioId = servicioUsuarios.GetUserId();
+			var tiposCuentas = await repositorioTiposCuentas.Get(usuarioId);
 			return View(tiposCuentas);
 		}
 		/*****************************************************************/
@@ -35,15 +35,15 @@ namespace ManejoPresupuesto.Controllers {
 		}
 		/*****************************************************************/
 		[HttpPost]
-		public async Task<IActionResult> Crear(TipoCuenta tipoCuenta) {
+		public async Task<IActionResult> CrearTipoCuenta(TipoCuenta tipoCuenta) {
 
 			if (!ModelState.IsValid) {
 				return View(tipoCuenta);
 			}
 
-			tipoCuenta.UsuarioId = servicioUsuarios.ObtenerUsuarioId();
+			tipoCuenta.UsuarioId = servicioUsuarios.GetUserId();
 
-			var yaExiste = await repositorioTiposCuentas.Existe(tipoCuenta.Nombre, tipoCuenta.UsuarioId);
+			var yaExiste = await repositorioTiposCuentas.Exists(tipoCuenta.Nombre, tipoCuenta.UsuarioId);
 
 			if (yaExiste) {
 				ModelState.AddModelError(nameof(tipoCuenta.Nombre),
@@ -52,15 +52,15 @@ namespace ManejoPresupuesto.Controllers {
 				return View(tipoCuenta);
 			}
 
-			await repositorioTiposCuentas.Crear(tipoCuenta);
+			await repositorioTiposCuentas.Create(tipoCuenta);
 
 			return RedirectToAction("Index");
 		}
 		/*****************************************************************/
 		[HttpGet]
 		public async Task<ActionResult> Editar(int id) {
-			var usuarioId = servicioUsuarios.ObtenerUsuarioId();
-			var tipoCuenta = await repositorioTiposCuentas.ObtenerPorId(id, usuarioId);
+			var usuarioId = servicioUsuarios.GetUserId();
+			var tipoCuenta = await repositorioTiposCuentas.GetById(id, usuarioId);
 
 			if (tipoCuenta is null) {
 				return RedirectToAction("NoEncontrado", "Home");
@@ -70,20 +70,20 @@ namespace ManejoPresupuesto.Controllers {
 		/*****************************************************************/
 		[HttpPost]
 		public async Task<ActionResult> EditarTipoCuenta(TipoCuenta tipoCuenta) {
-			var usuarioId = servicioUsuarios.ObtenerUsuarioId();
-			var tipoCuentaExiste = await repositorioTiposCuentas.ObtenerPorId(tipoCuenta.Id, usuarioId);
+			var usuarioId = servicioUsuarios.GetUserId();
+			var tipoCuentaExiste = await repositorioTiposCuentas.GetById(tipoCuenta.Id, usuarioId);
 
 			if (tipoCuentaExiste is null) {
 				return RedirectToAction("NoEncontrado", "Home");
 			}
 
-			await repositorioTiposCuentas.Actualizar(tipoCuenta);
+			await repositorioTiposCuentas.Update(tipoCuenta);
 			return RedirectToAction("Index");
 		}
 		/*****************************************************************/
-		public async Task<IActionResult> Borrar(int id) {
-			var usuarioId = servicioUsuarios.ObtenerUsuarioId();
-			var tipoCuenta = await repositorioTiposCuentas.ObtenerPorId(id, usuarioId);
+		public async Task<IActionResult> Eliminar(int id) {
+			var usuarioId = servicioUsuarios.GetUserId();
+			var tipoCuenta = await repositorioTiposCuentas.GetById(id, usuarioId);
 
 			if (tipoCuenta is null) {
 				return RedirectToAction("NoEncontrado", "Home");
@@ -93,23 +93,23 @@ namespace ManejoPresupuesto.Controllers {
 		}
 		/*****************************************************************/
 		[HttpPost]
-		public async Task<IActionResult> BorrarTipoCuenta(int id) {
-			var usuarioId = servicioUsuarios.ObtenerUsuarioId();
-			var tipoCuenta = await repositorioTiposCuentas.ObtenerPorId(id, usuarioId);
+		public async Task<IActionResult> EliminarTipoCuenta(int id) {
+			var usuarioId = servicioUsuarios.GetUserId();
+			var tipoCuenta = await repositorioTiposCuentas.GetById(id, usuarioId);
 
 			if (tipoCuenta is null) {
 				return RedirectToAction("NoEncontrado", "Home");
 			}
 
-			await repositorioTiposCuentas.Borrar(id);
+			await repositorioTiposCuentas.Delete(id);
 			return RedirectToAction("Index");
 
 		}
 		/*****************************************************************/
 		[HttpGet]
 		public async Task<IActionResult> VerificarTipoCuenta(string nombre) {
-			var usuarioId = servicioUsuarios.ObtenerUsuarioId();
-			var yaExisteTipoCuenta = await repositorioTiposCuentas.Existe(nombre, usuarioId);
+			var usuarioId = servicioUsuarios.GetUserId();
+			var yaExisteTipoCuenta = await repositorioTiposCuentas.Exists(nombre, usuarioId);
 
 			if (yaExisteTipoCuenta) {
 				return Json($"El nombre {nombre} ya existe");
@@ -118,9 +118,9 @@ namespace ManejoPresupuesto.Controllers {
 		}
 		/*****************************************************************/
 		[HttpPost]
-		public async Task<IActionResult> Ordenar([FromBody] int[] ids) {
-			var usuarioId = servicioUsuarios.ObtenerUsuarioId();
-			var tiposCuentas = await repositorioTiposCuentas.Obtener(usuarioId);
+		public async Task<IActionResult> OrdenarTipoCuenta([FromBody] int[] ids) {
+			var usuarioId = servicioUsuarios.GetUserId();
+			var tiposCuentas = await repositorioTiposCuentas.Get(usuarioId);
 			var idsTiposCuentas = tiposCuentas.Select(x => x.Id);
 			/*
 			 * Compara los id(tiposCuentas) de la DB, con los ids que manda el usuario del frontend
@@ -140,7 +140,7 @@ namespace ManejoPresupuesto.Controllers {
 			new TipoCuenta() { Id = valor, Orden = indice + 1 })
 			.AsEnumerable();
 
-			await repositorioTiposCuentas.Ordenar(tiposCuentasOrdenados);
+			await repositorioTiposCuentas.Order(tiposCuentasOrdenados);
 
 			return Ok();
 		}

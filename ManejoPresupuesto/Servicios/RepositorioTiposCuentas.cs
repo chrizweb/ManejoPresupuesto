@@ -5,13 +5,13 @@ using Microsoft.Data.SqlClient;
 namespace ManejoPresupuesto.Servicios {
 	/*=================================================================*/
 	public interface IRepositorioTiposCuentas {
-		Task Actualizar(TipoCuenta tipoCuenta);
-		Task Borrar(int id);
-		Task Crear(TipoCuenta tipoCuenta);
-		Task<bool> Existe(string nombre, int usuarioId);
-		Task<IEnumerable<TipoCuenta>> Obtener(int usuarioId);
-		Task<TipoCuenta> ObtenerPorId(int id, int usuarioId);
-		Task Ordenar(IEnumerable<TipoCuenta> tipoCuentasOrdenados);
+		Task Update(TipoCuenta tipoCuenta);
+		Task Delete(int id);
+		Task Create(TipoCuenta tipoCuenta);
+		Task<bool> Exists(string nombre, int usuarioId);
+		Task<IEnumerable<TipoCuenta>> Get(int usuarioId);
+		Task<TipoCuenta> GetById(int id, int usuarioId);
+		Task Order(IEnumerable<TipoCuenta> tipoCuentasOrdenados);
 	}
 	/*=================================================================*/
 	public class RepositorioTiposCuentas : IRepositorioTiposCuentas{
@@ -23,7 +23,7 @@ namespace ManejoPresupuesto.Servicios {
 			connectionString = configuration.GetConnectionString("DefaultConnection");
 		}
 		/*****************************************************************/
-		public async Task Crear(TipoCuenta tipoCuenta) {
+		public async Task Create(TipoCuenta tipoCuenta) {
 			using var conn = new SqlConnection(connectionString);
 			var id = await conn.QuerySingleAsync<int>(
 				"TiposCuentas_Insertar ", new {
@@ -38,7 +38,7 @@ namespace ManejoPresupuesto.Servicios {
 		
 		}
 		/*****************************************************************/
-		public async Task<bool> Existe(string nombre, int usuarioId) {
+		public async Task<bool> Exists(string nombre, int usuarioId) {
 
 			using var conn = new SqlConnection(connectionString);
 			var existe = await conn.QueryFirstOrDefaultAsync<int>(
@@ -50,7 +50,7 @@ namespace ManejoPresupuesto.Servicios {
 			return existe == 1;
 		}
 		/*****************************************************************/
-		public async Task<IEnumerable<TipoCuenta>> Obtener(int usuarioId) {
+		public async Task<IEnumerable<TipoCuenta>> Get(int usuarioId) {
 
 			using var conn = new SqlConnection(connectionString);
 			return await conn.QueryAsync<TipoCuenta>(
@@ -62,7 +62,7 @@ namespace ManejoPresupuesto.Servicios {
 			);
 		}
 		/*****************************************************************/
-		public async Task Actualizar(TipoCuenta tipoCuenta) {
+		public async Task Update(TipoCuenta tipoCuenta) {
 
 			using var conn = new SqlConnection(connectionString);
 			await conn.ExecuteAsync(
@@ -73,7 +73,7 @@ namespace ManejoPresupuesto.Servicios {
 			);
 		}
 		/*****************************************************************/
-		public async Task<TipoCuenta> ObtenerPorId(int id, int usuarioId) {
+		public async Task<TipoCuenta> GetById(int id, int usuarioId) {
 
 			using var conn = new SqlConnection(connectionString);
 			return await conn.QueryFirstOrDefaultAsync<TipoCuenta>(
@@ -84,7 +84,7 @@ namespace ManejoPresupuesto.Servicios {
 			);
 		}
 		/*****************************************************************/
-		public async Task Borrar(int id) {
+		public async Task Delete(int id) {
 			using var conn = new SqlConnection(connectionString);
 			await conn.ExecuteAsync(
 				@"delete TiposCuentas
@@ -93,7 +93,7 @@ namespace ManejoPresupuesto.Servicios {
 			);
 		}
 		/*****************************************************************/
-		public async Task Ordenar(IEnumerable<TipoCuenta> tipoCuentasOrdenados) {
+		public async Task Order(IEnumerable<TipoCuenta> tipoCuentasOrdenados) {
 			var query = "update TiposCuentas set Orden = @Orden where Id = @Id";
 			using var conn = new SqlConnection(connectionString);
 			await conn.ExecuteAsync(query, tipoCuentasOrdenados);

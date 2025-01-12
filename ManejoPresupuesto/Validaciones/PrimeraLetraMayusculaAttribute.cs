@@ -4,7 +4,7 @@ namespace ManejoPresupuesto.Validaciones {
 	public class PrimeraLetraMayusculaAttribute : ValidationAttribute{
 
 		/*Verificar si la primera letra es mayuscula*/
-		protected override ValidationResult? IsValid(object? value, ValidationContext validationContext) {
+		protected override ValidationResult IsValid(object value, ValidationContext validationContext) {
 			
 			if(value == null || string.IsNullOrEmpty(value.ToString())) {
 				return ValidationResult.Success;

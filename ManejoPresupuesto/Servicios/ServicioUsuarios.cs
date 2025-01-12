@@ -1,11 +1,11 @@
 ﻿namespace ManejoPresupuesto.Servicios {
 
 	public interface IServicioUsuarios {
-		int ObtenerUsuarioId();
+		int GetUserId();
 	}
 	public class ServicioUsuarios : IServicioUsuarios{
 
-		public int ObtenerUsuarioId() {
+		public int GetUserId() {
 			return 1;
 		}
 	}
