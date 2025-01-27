@@ -43,6 +43,75 @@ namespace ManejoPresupuesto.Controllers {
 			return RedirectToAction("Index");
 		}
 		/*****************************************************************/
+		public async Task<IActionResult> Editar(int id) {
+			
+			var usuarioId = servicioUsuarios.GetUserId();
+			var categoria = await repositorioCategorias.GetById(id, usuarioId);
 
+			if(categoria is null) {
+				return RedirectToAction("NoEncontrado", "Home");
+			}
+
+			return View(categoria);
+
+		}
+		/*****************************************************************/
+		[HttpPost]
+		public async Task<IActionResult> EditarCategoria(Categoria categoriaEditar) {
+
+			if (!ModelState.IsValid) {
+				return View(categoriaEditar);
+			}
+
+			var usuarioId = servicioUsuarios.GetUserId();
+			var categoria = await repositorioCategorias.GetById(categoriaEditar.Id, usuarioId);
+
+			if (categoria is null) {
+				return RedirectToAction("NoEncontrado", "Home");
+			}
+
+			categoriaEditar.UsuarioId = usuarioId;
+			await repositorioCategorias.Update(categoriaEditar);
+			return RedirectToAction("Index");
+
+		}
+		/*****************************************************************/
+		public async Task<IActionResult> Eliminar(int id) {
+
+			var usuarioId = servicioUsuarios.GetUserId();
+			var categoria = await repositorioCategorias.GetById(id, usuarioId);
+
+			if(categoria is null) {
+				return RedirectToAction("NoEncontrado", "Home");
+			}
+
+			return View(categoria);
+		}
+		/*****************************************************************/
+		[HttpPost]
+		public async Task<IActionResult> EliminarCategoria(int id) {
+
+			var usuarioId = servicioUsuarios.GetUserId();
+			var categoria = await repositorioCategorias.GetById(id, usuarioId);
+
+			if(categoria is null) {
+				return RedirectToAction("NoEncontrado", "Home");
+			}
+
+			await repositorioCategorias.Delete(id);
+			return RedirectToAction("Index");
+		}
+		/*****************************************************************/
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
