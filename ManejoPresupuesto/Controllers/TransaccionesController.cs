@@ -13,6 +13,7 @@ namespace ManejoPresupuesto.Controllers {
 		private readonly IRepositorioTransacciones repositorioTransacciones;
 		private readonly IMapper mapper;
 
+
 		public TransaccionesController(
 			IServicioUsuarios servicioUsuarios,
 			IRepositorioCuentas repositorioCuentas,
@@ -86,11 +87,12 @@ namespace ManejoPresupuesto.Controllers {
 			}
 
 			var modelo = mapper.Map<TransaccionActualizacionViewModel>(transaccion);
-
+			
+			/*En caso sea ingreso*/
 			modelo.MontoAnterio = modelo.Monto;
 
 			if(modelo.TipoOperacionId == TipoOperacion.Gasto) {
-				/*Para que tome valores negativos*/
+				/*En caso sea gasto tomara valores negativos*/
 				modelo.MontoAnterio = modelo.Monto * -1;
 
 			}
@@ -111,6 +113,7 @@ namespace ManejoPresupuesto.Controllers {
 			if (!ModelState.IsValid) {
 				modelo.Cuentas = await ObtenerCuentas(usuarioId);
 				modelo.Categorias = await ObtenerCategoriasTipoOperacion(usuarioId, modelo.TipoOperacionId);
+
 				return View(modelo);
 			}
 

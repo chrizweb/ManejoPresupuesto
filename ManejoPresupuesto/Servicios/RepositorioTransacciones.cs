@@ -7,14 +7,14 @@ namespace ManejoPresupuesto.Servicios {
 	public interface IRepositorioTransacciones {
 		Task Create(Transaccion transaccion);
 		Task<Transaccion> GetById(int id, int usuarioId);
-		Task Update(Transaccion transaccion, decimal montoAnterior, int cuentaAntarior);
+		Task Update(Transaccion transaccion, decimal montoAnterior, int cuentaAntariorId);
 	}
 
 	public class RepositorioTransacciones : IRepositorioTransacciones {
 
 		private readonly string connectionString;
 		public RepositorioTransacciones(IConfiguration configuration) {
-			connectionString = configuration.GetConnectionString("DefaultConnection");
+			connectionString = configuration.GetConnectionString("DefaultConnection"); 
 		}
 		/*****************************************************************/
 		public async Task Create(Transaccion transaccion) {
@@ -32,7 +32,7 @@ namespace ManejoPresupuesto.Servicios {
 			transaccion.Id = id;
 		}
 		/*****************************************************************/
-		public async Task Update(Transaccion transaccion, decimal montoAnterior, int cuentaAntariorId) {
+		public async Task Update(Transaccion transaccion, decimal montoAnterior, int cuentaAnteriorId) {
 
 			using var conn = new SqlConnection(connectionString);
 			await conn.ExecuteAsync("Transacciones_Actualizar", new {
@@ -44,7 +44,7 @@ namespace ManejoPresupuesto.Servicios {
 				transaccion.CuentaId,
 				transaccion.Nota,
 				montoAnterior,
-				cuentaAntariorId
+				cuentaAnteriorId
 			}, commandType: System.Data.CommandType.StoredProcedure);
 		}
 		/*****************************************************************/
